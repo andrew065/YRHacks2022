@@ -11,6 +11,4 @@ bot.load_extension('antiprocrastination')
 async def on_ready():
     print("Bot is ready")
 
-bot.load_extension("somecommands")
-
 bot.run(token)
