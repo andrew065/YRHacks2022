@@ -1,6 +1,8 @@
 from database import get_database
 from discord.ext import commands
-from discord import Color, Embed
+from discord import Color, Embed, Member
+from pymongo import ReturnDocument
+from random import randint
 
 class Points(commands.Cog):
 
@@ -15,11 +17,33 @@ class Points(commands.Cog):
 
     @commands.command(name='leaderboard')
     async def leaderboard(self, ctx: commands.Context):
-        embed = Embed(title="Point Leaderboard", color=Color.blue())
+        embed = Embed(title='Point Leaderboard', color=Color.blue())
         for x in self.db.users.find().sort('points', -1):
             user = await self.bot.fetch_user(x['user_id'])
             embed.add_field(name=user.name, value=x['points'], inline=False)
         await ctx.send(embed=embed)
+
+    # A little bit of trolling
+    @commands.command(name='attack')
+    async def fight(self, ctx: commands.Context, target: Member):
+        damage = randint(1, 5)
+        opponent = self.db.fight.find_one_and_update(
+            { 'user_id': target.id },
+            { '$inc' : { 'hp': -damage } },
+            upsert=True,
+            return_document=ReturnDocument.AFTER
+        )
+        await ctx.send(f'{ctx.author.mention} attacked {target} for {damage} damage!\nThey are now at {opponent["hp"]} HP')
+
+    @commands.command(name='heal')
+    async def heal(self, ctx: commands.Context):
+        player = self.db.fight.find_one_and_update(
+            { 'user_id': ctx.author.id },
+            { '$inc' : { 'hp': 2 } },
+            upsert=True,
+            return_document=ReturnDocument.AFTER
+        )
+        await ctx.send(f'{ctx.author.mention} healed 2 HP!\nThey are now at {player["hp"]} HP!')
 
 
 def setup(bot: commands.Bot):

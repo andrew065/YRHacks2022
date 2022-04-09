@@ -7,6 +7,7 @@ bot.load_extension('somecommands')
 bot.load_extension('googlecalendar')
 bot.load_extension('antiprocrastination')
 bot.load_extension('points')
+bot.load_extension('tasks')
 
 @bot.event
 async def on_ready():
