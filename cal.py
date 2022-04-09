@@ -8,16 +8,10 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-all_events = []
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-auth_url = 'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=759569633564' \
-           '-q85sfhj5q0mfrolot0s9q0aodp6vdb85.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A57514' \
-           '%2F&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar.readonly&state' \
-           '=0Z2RJ0fKTeyINcmaFqqQeHobMsFmiZ&access_type=offline '
 
-
-def main():
+def get_creds():
     creds = None
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
@@ -31,7 +25,8 @@ def main():
             token.write(creds.to_json())
     return creds
 
+
 if __name__ == '__main__':
-    main()
+    get_creds()
 
 
